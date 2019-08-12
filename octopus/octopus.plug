@@ -1,0 +1,9 @@
+[Core]
+Name = Octopus Deploy Client
+Module = octopus
+
+[Documentation]
+Description = Interfaces with the Octopus Deploy API
+
+[Python]
+Version = 2+

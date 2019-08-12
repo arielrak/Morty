@@ -1,0 +1,9 @@
+[Core]
+Name = oc_flow
+Module = oc_flow
+
+[Documentation]
+Description = Flow for deploying step templates and setting values for parameters in Octopus Deploy
+
+[Python]
+Version = 2+
