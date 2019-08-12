@@ -63,7 +63,7 @@ BACKEND = 'Slack'  # defaults to XMPP
 
 # The location where all of Err's data should be stored. Make sure to set
 # this to a directory that is writable by the user running the bot.
-BOT_DATA_DIR = '/Users/ariel/Programming/ErrbotVE/errbot-root/data'
+BOT_DATA_DIR = 
 
 ### Repos and plugins config.
 
@@ -82,7 +82,7 @@ BOT_DATA_DIR = '/Users/ariel/Programming/ErrbotVE/errbot-root/data'
 # locally before publishing it. Note that you can specify only a single
 # directory, however you are free to create subdirectories with multiple
 # plugins inside this directory.
-BOT_EXTRA_PLUGIN_DIR = '/Users/ariel/Programming/ErrbotVE/errbot-root/plugins'
+BOT_EXTRA_PLUGIN_DIR = 
 
 # If you use an external backend as a plugin,
 # this is where you tell Errbot where to find it.
@@ -169,7 +169,7 @@ BOT_IDENTITY = {
     # 'endpoint': 'https://api.hipchat.com'
 
     ## Slack mode (comment the others above if using this mode)
-    'token': 'xoxb-669659265472-669681680725-FlFN9XaH7tJ9w3wPODGhEOgw',
+    'token': ,
     ## you can also include the proxy for the SlackClient connection
     # 'proxies': {'http': 'some-http-proxy', 'https': 'some-https-proxy'}
 
@@ -237,7 +237,7 @@ CHATROOM_PRESENCE = ()
 # names, rather than the BOT_PREFIX above. This option allows you to
 # specify alternative prefixes the bot will respond to in addition to
 # the prefix above.
-BOT_ALT_PREFIXES = ('@morty','morty','Morty')
+BOT_ALT_PREFIXES = ('@morty')
 
 # If you use alternative prefixes, you might want to allow users to insert
 # separators like , and ; between the prefix and the command itself. This
