@@ -1,0 +1,10 @@
+[Core]
+name = AzureAPI
+module = main
+
+[Documentation]
+description = Access metrics stored in Azure Insights
+
+[Python]
+version = 3
+
