@@ -23,6 +23,9 @@ class OctopusPlugin(BotPlugin):
         self.templates = OctopusTemplates(self.interface, self.machines)
         self.predefined = OctopusPredefinedTemplates(self.interface, self.templates)
         self.artifacts = OctopusArtifacts(self, self.interface)
+        
+        if 'admins' not in self:
+            self['admins'] = []
 
     @botcmd(split_args_with=',')
     def octopus_predefined_run(self, msg, args):
