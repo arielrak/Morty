@@ -8,13 +8,18 @@ from library.octopus_tasks import OctopusTasks
 from library.octopus_templates import OctopusTemplates
 from library.octopus_predefined import OctopusPredefinedTemplates 
 from library.octopus_artifacts import OctopusArtifacts
+from client.client_config import client_url, standard_token, admin_token
 
 class OctopusPlugin(BotPlugin):
     
     def activate(self):
         super(OctopusPlugin, self).activate()
+        base_url = client_url + '/octopus'
         self.interface = OctopusInterface(
-            self, base_url='http://127.0.0.1:5000/octopus'
+            self, 
+            base_url=base_url,
+            standard_token=standard_token,
+            admin_token=admin_token
         )
         self.permissions = OctopusPermissions(self)
         self.names = OctopusNames(self, self.interface)
@@ -23,9 +28,6 @@ class OctopusPlugin(BotPlugin):
         self.templates = OctopusTemplates(self.interface, self.machines)
         self.predefined = OctopusPredefinedTemplates(self.interface, self.templates)
         self.artifacts = OctopusArtifacts(self, self.interface)
-        
-        if 'admins' not in self:
-            self['admins'] = []
 
     @botcmd(split_args_with=',')
     def octopus_predefined_run(self, msg, args):

@@ -1,10 +1,10 @@
 from octopus_client import OctopusClient
 from app import OctopusApiServer
+from client_config import base_url, api_key
 
 client = OctopusClient(
-    base_url='https://chatops.octopus.app/api',
-    api_key='API-5G9QUKBMCRMVNPQRUN7BEIOYOI0'
-    #api_key='API-SWNWJ53CQEDJGXMZRDRDL1JKLA'
+    base_url=base_url,
+    api_key=api_key
 )
 
 api_server = OctopusApiServer(client)

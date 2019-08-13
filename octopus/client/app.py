@@ -1,6 +1,7 @@
 from flask import Flask
 
 from controller import client, init_client
+from client_config import host, port
 
 class OctopusApiServer:
     def __init__(self, client_service):
@@ -13,4 +14,4 @@ class OctopusApiServer:
         init_client(self._client_service)
 
     def run(self):
-        self._app.run()
+        self._app.run(host=host, port=port)

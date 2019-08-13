@@ -1,5 +1,6 @@
 import json
 from flask import Blueprint, abort, jsonify, request
+from client_config import standard_token, admin_token
 
 # needed to import config file
 import os, sys, inspect
@@ -10,9 +11,6 @@ from library.oc_config.oc_config import blacklisted
 
 client = Blueprint('octopus', __name__)
 _client_service = None
-
-standard_token = 'KjNksTbCgszxnx3Vubr7'
-admin_token = 'EeeIyfb7PEM3uVyKGzzi'
 
 def init_client(client_service):
     global _client_service

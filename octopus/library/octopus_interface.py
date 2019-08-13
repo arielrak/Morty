@@ -3,12 +3,12 @@ import json
 
 class OctopusInterface:
 
-    standard_token = 'KjNksTbCgszxnx3Vubr7'
-    admin_token = 'EeeIyfb7PEM3uVyKGzzi'
 
-    def __init__(self, plugin, base_url):
+    def __init__(self, plugin, base_url, standard_token, admin_token):
         self.plugin = plugin
         self.base_url = base_url
+        self.standard_token = standard_token
+        self.admin_token = admin_token
 
     def post_request(self, msg, name, template_id, parameters, machines):
         response = requests.post(
