@@ -1,0 +1,10 @@
+[Core]
+name = CookieBot
+module = cookiebot
+
+[Documentation]
+description = Generate cookies
+
+[Python]
+version = 3
+

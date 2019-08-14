@@ -1,3 +1,4 @@
+import inspect
 import json
 import os
 
@@ -29,11 +30,13 @@ class QueryService:
         self._write_new_presets_dict(presets)
 
     def _get_presets_dict(self):
-        if not os.path.isfile("plugins/AzureAPI/query/query_presets.json"):
+        currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        if not os.path.isfile(currentdir+"/query_presets.json"):
             return {}
-        with open("plugins/AzureAPI/query/query_presets.json", "r") as file:
+        with open(currentdir+"/query_presets.json", "r") as file:
             return json.load(file)
 
     def _write_new_presets_dict(self, new_dict: dict):
-        with open("plugins/AzureAPI/query/query_presets.json", "w") as file:
+        currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        with open(currentdir+"/query_presets.json", "w") as file:
             file.write(json.dumps(new_dict))

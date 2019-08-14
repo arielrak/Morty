@@ -5,7 +5,7 @@ import os
 from errbot import BotPlugin, botcmd, arg_botcmd
 
 from api_interface import RequestExecutor
-from azureapi_config import keys
+from azureapi_config import keys, apps
 from events.events_service import EventsService
 from metrics.metrics_service import MetricsService
 from query.query_displayer import QueryDisplayer
@@ -21,15 +21,30 @@ class Azureapi(BotPlugin):
     def activate(self):
         super(Azureapi, self).activate()
 
-        self._app_id = keys["azure_app_id"]
-        self._app_key = keys["azure_app_key"]
         self._slack_key = keys["slack_api_key"]
+        self._app_id = list(apps.values())[0]["azure_app_id"]
+        self._app_key = list(apps.values())[0]["azure_app_key"]
         self._api_service = RequestExecutor(self._app_id, self._app_key, self._slack_key)
         self._metrics_service = MetricsService(self._api_service)
         self._events_service = EventsService(self._api_service)
         self._query_service = QueryService(self._api_service)
         self._query_displayer = QueryDisplayer()
 
+    def _set_app(self, app_name: str):
+        if app_name not in apps:
+            raise Exception("Invalid app name")
+        self._app_id = apps[app_name]["azure_app_id"]
+        self._app_key = apps[app_name]["azure_app_key"]
+
+    @arg_botcmd('name', type=str, unpack_args=False)
+    def change_azure_app(self, msg, args):
+        try:
+            self._set_app(args.name)
+            yield "Changed app!"
+        except:
+            yield "App name not in config file!"
+
+    @arg_botcmd('--app', type=str, unpack_args=False)
     @arg_botcmd('--timespan', type=str, unpack_args=False)
     @arg_botcmd('--interval', type=str, unpack_args=False)
     @arg_botcmd('--aggregation', type=str, unpack_args=False)
@@ -45,12 +60,23 @@ class Azureapi(BotPlugin):
 
         yield "Let me fetch that for you"
 
+        old_appid = self._app_id
+        old_appkey = self._app_key
+        if args.app is not None:
+            try:
+                self._set_app(args.app)
+            except:
+                yield "Invalid app name, proceeding with default app"
+        args.app = None
         response = self._metrics_service.get_metric(args)
         summary_value = str(self._find(args.metric_id, response))
         if summary_value is None:
             yield "Metric not found"
         else:
             self._handle_response(response, msg, str(args.metric_id) + " : " + summary_value)
+
+        self._app_id = old_appid
+        self._app_key = old_appkey
 
     @botcmd
     def get_all_azure_metrics(self, msg, args):
@@ -68,6 +94,7 @@ class Azureapi(BotPlugin):
                        color="green",
                        in_reply_to=msg)
 
+    @arg_botcmd('--app', type=str, unpack_args=False)
     @arg_botcmd('--timespan', type=str, unpack_args=False)
     @arg_botcmd('--filter', type=str, unpack_args=False)
     @arg_botcmd('--search', type=str, unpack_args=False)
@@ -85,9 +112,22 @@ class Azureapi(BotPlugin):
         Get information about a specific event
         """
         yield "Let me fetch that for you"
+
+        old_appid = self._app_id
+        old_appkey = self._app_key
+        if args.app is not None:
+            try:
+                self._set_app(args.app)
+            except:
+                yield "Invalid app name, proceeding with default app"
+        args.app = None
+
         response = self._events_service.get_event(args)
 
         self._handle_response(response, msg, args.event_type)
+
+        self._app_id = old_appid
+        self._app_key = old_appkey
 
     @botcmd
     def get_azure_events_metadata(self, msg, args):
@@ -102,6 +142,7 @@ class Azureapi(BotPlugin):
                                  stream_type='application/text')
 
     @arg_botcmd('preset_query_name', type=str, default=None)
+    @arg_botcmd('--app', type=str, unpack_args=False)
     @arg_botcmd('--barx', type=str, unpack_args=False)
     @arg_botcmd('--bary', type=str, unpack_args=False)
     @arg_botcmd('--scatterx', type=str, unpack_args=False)
@@ -113,9 +154,19 @@ class Azureapi(BotPlugin):
         Make azure insights query from presets
         """
         yield "Let me fetch that for you"
+
+        old_appid = self._app_id
+        old_appkey = self._app_key
+        if args.app is not None:
+            try:
+                self._set_app(args.app)
+            except:
+                yield "Invalid app name, proceeding with default app"
+        args.app = None
+
         response = self._query_service.get_preset_query(args.preset_query_name)
 
-        self._handle_display(response, args)
+        self._handle_display(response, msg, args)
 
         if response is None:
             self.send_card(title=args.preset_query_name,
@@ -125,7 +176,11 @@ class Azureapi(BotPlugin):
         else:
             self._handle_response(response, msg, args.preset_query_name)
 
+        self._app_id = old_appid
+        self._app_key = old_appkey
+
     @arg_botcmd('custom_query', type=str, default=None)
+    @arg_botcmd('--app', type=str, unpack_args=False)
     @arg_botcmd('--barx', type=str, unpack_args=False)
     @arg_botcmd('--bary', type=str, unpack_args=False)
     @arg_botcmd('--scatterx', type=str, unpack_args=False)
@@ -138,10 +193,22 @@ class Azureapi(BotPlugin):
         """
         yield "Let me fetch that for you"
 
+        old_appid = self._app_id
+        old_appkey = self._app_key
+        if args.app is not None:
+            try:
+                self._set_app(args.app)
+            except:
+                yield "Invalid app name, proceeding with default app"
+        args.app = None
+
         response = self._query_service.get_custom_query(args.custom_query)
 
-        self._handle_display(response, args)
+        self._handle_display(response, msg, args)
         self._handle_response(response, msg, args.custom_query)
+
+        self._app_id = old_appid
+        self._app_key = old_appkey
 
     @botcmd
     def get_azure_query_presets(self, msg, args):
@@ -179,23 +246,24 @@ class Azureapi(BotPlugin):
                            in_reply_to=msg)
             return
 
-    def _handle_display(self, response, args):
+    def _handle_display(self, response, msg, args):
+        channel = str(msg.frm).split("/")[0].split("#")[1]
 
         self._query_displayer.make_table(response, "plugins/AzureAPI/images/temp.png")
-        self._api_service.send_image(os.path.abspath("plugins/AzureAPI/images/temp.png"), "maintesting")
+        self._api_service.send_image(os.path.abspath("plugins/AzureAPI/images/temp.png"), channel)
 
         if args.barx is not None and args.bary is not None:
             self._query_displayer.make_bargraph(response, "plugins/AzureAPI/images/temp.png", args.barx, args.bary)
-            self._api_service.send_image(os.path.abspath("plugins/AzureAPI/images/temp.png"), "maintesting")
+            self._api_service.send_image(os.path.abspath("plugins/AzureAPI/images/temp.png"), channel)
 
         if args.scatterx is not None and args.scattery is not None:
             self._query_displayer.make_scatter(response, "plugins/AzureAPI/images/temp.png", args.scatterx,
                                                args.scattery)
-            self._api_service.send_image(os.path.abspath("plugins/AzureAPI/images/temp.png"), "maintesting")
+            self._api_service.send_image(os.path.abspath("plugins/AzureAPI/images/temp.png"), channel)
 
         if args.linex is not None and args.liney is not None:
             self._query_displayer.make_line(response, "plugins/AzureAPI/images/temp.png", args.linex, args.liney)
-            self._api_service.send_image(os.path.abspath("plugins/AzureAPI/images/temp.png"), "maintesting")
+            self._api_service.send_image(os.path.abspath("plugins/AzureAPI/images/temp.png"), channel)
 
     # Recursive method for finding the first instance of a key in a nested dict
     # Adapted from Stack Overflow:s https://tinyurl.com/y4qmzdj3

@@ -1,0 +1,10 @@
+[Core]
+name = playground
+module = playground
+
+[Documentation]
+description = A plugin testing playground
+
+[Python]
+version = 3
+
