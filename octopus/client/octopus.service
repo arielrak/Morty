@@ -2,7 +2,7 @@
 Description=Foo
 
 [Service]
-ExecStart=/usr/sbin/foo-daemon
+ExecStart=python3 ~/errbot-venv/errbot-root/plugins/octopus/client/start_client_service
 
 [Install]
 WantedBy=multi-user.target
