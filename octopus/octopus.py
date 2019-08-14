@@ -122,16 +122,30 @@ class OctopusPlugin(BotPlugin):
         
     @botcmd(admin_only=True, hidden=True)
     def octopus_permissions_add(self, msg, args):
+        """
+        To add the slack user @john.doe from the permissions list: 
+        !octopus permissions add john.doe
+        """
         return self.permissions.add_permissions(args)
 
     @botcmd(admin_only=True, hidden=True)
     def octopus_permissions_get(self, msg, args):
+        """
+        Gets a list of the users with blacklist permissions.
+        """
         return self.permissions.get_permissions()
     
     @botcmd(admin_only=True, hidden=True)
     def octopus_permissions_remove(self, msg, args):
+        """
+        To remove the slack user @john.doe from the permissions list: 
+        !octopus permissions remove john.doe
+        """
         return self.permissions.remove_permissions(args)
 
     @botcmd(admin_only=True, hidden=True)
     def octopus_permissions_clear(self, msg, args):
+        """
+        If the permissions list becomes corrupted, use this command to clear it out and create a new empty list.
+        """
         return self.permissions.clear_permissions()
