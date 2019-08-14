@@ -1,0 +1,2 @@
+source ~/errbot-venv/bin/activate
+python3 ~/errbot-venv/errbot-root/plugins/octopus/client/main.py
