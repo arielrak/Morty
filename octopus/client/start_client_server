@@ -1,2 +1,4 @@
-source ~/errbot-venv/bin/activate
-python3 ~/errbot-venv/errbot-root/plugins/octopus/client/main.py
+#!/bin/bash -
+
+source /home/morty/errbot-venv/bin/activate
+python3 /home/morty/errbot-venv/errbot-root/plugins/octopus/client/main.py

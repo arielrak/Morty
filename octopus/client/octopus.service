@@ -1,8 +1,8 @@
 [Unit]
-Description=Foo
+Description=Octopus Client
 
 [Service]
-ExecStart=/usr/sbin/foo-daemon
+ExecStart=/home/morty/errbot-venv/errbot-root/plugins/octopus/client/start_client_service
 
 [Install]
 WantedBy=multi-user.target

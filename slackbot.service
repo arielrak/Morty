@@ -1,0 +1,8 @@
+[Unit]
+Description=Slackbot
+
+[Service]
+ExecStart=/home/morty/errbot-venv/errbot-root/start_bot
+
+[Install]
+WantedBy=multi-user.target

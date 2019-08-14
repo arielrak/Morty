@@ -1,0 +1,4 @@
+#!/bin/bash -
+
+source /home/morty/errbot-venv/bin/activate
+/home/morty/errbot-venv/errbot-root/errbot
