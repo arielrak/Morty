@@ -30,19 +30,18 @@ class Azureapi(BotPlugin):
         self._query_service = QueryService(self._api_service)
         self._query_displayer = QueryDisplayer()
 
-    def _set_app(self, app_name: str):
-        if app_name not in apps:
-            raise Exception("Invalid app name")
-        self._app_id = apps[app_name]["azure_app_id"]
-        self._app_key = apps[app_name]["azure_app_key"]
+    def _set_app(self, app_id: str, app_key: str):
+        self._app_id = app_id
+        self._app_key = app_key
+        self._api_service = RequestExecutor(self._app_id, self._app_key, self._slack_key)
 
     @arg_botcmd('name', type=str, unpack_args=False)
     def change_azure_app(self, msg, args):
-        try:
-            self._set_app(args.name)
-            yield "Changed app!"
-        except:
+        if args.name not in apps:
             yield "App name not in config file!"
+        else:
+            self._set_app(apps[args.name]["azure_app_id"], apps[args.name]["azure_app_key"])
+            yield "Changed app!"
 
     @arg_botcmd('--app', type=str, unpack_args=False)
     @arg_botcmd('--timespan', type=str, unpack_args=False)
@@ -62,11 +61,13 @@ class Azureapi(BotPlugin):
 
         old_appid = self._app_id
         old_appkey = self._app_key
-        if args.app is not None:
-            try:
-                self._set_app(args.app)
-            except:
-                yield "Invalid app name, proceeding with default app"
+        if args.app not in apps:
+            yield "App name not in config file, proceeding with default."
+        else:
+            self._set_app(apps[args.name]["azure_app_id"], apps[args.name]["azure_app_key"])
+            yield "Proceeding with "+args.app
+
+
         args.app = None
         response = self._metrics_service.get_metric(args)
         summary_value = str(self._find(args.metric_id, response))
@@ -75,8 +76,7 @@ class Azureapi(BotPlugin):
         else:
             self._handle_response(response, msg, str(args.metric_id) + " : " + summary_value)
 
-        self._app_id = old_appid
-        self._app_key = old_appkey
+        self._set_app(self, old_appid, old_appkey)
 
     @botcmd
     def get_all_azure_metrics(self, msg, args):
@@ -115,19 +115,18 @@ class Azureapi(BotPlugin):
 
         old_appid = self._app_id
         old_appkey = self._app_key
-        if args.app is not None:
-            try:
-                self._set_app(args.app)
-            except:
-                yield "Invalid app name, proceeding with default app"
+        if args.app not in apps:
+            yield "App name not in config file, proceeding with default."
+        else:
+            self._set_app(apps[args.name]["azure_app_id"], apps[args.name]["azure_app_key"])
+            yield "Proceeding with " + args.app
         args.app = None
 
         response = self._events_service.get_event(args)
 
         self._handle_response(response, msg, args.event_type)
 
-        self._app_id = old_appid
-        self._app_key = old_appkey
+        self._set_app(self, old_appid, old_appkey)
 
     @botcmd
     def get_azure_events_metadata(self, msg, args):
@@ -157,11 +156,11 @@ class Azureapi(BotPlugin):
 
         old_appid = self._app_id
         old_appkey = self._app_key
-        if args.app is not None:
-            try:
-                self._set_app(args.app)
-            except:
-                yield "Invalid app name, proceeding with default app"
+        if args.app not in apps:
+            yield "App name not in config file, proceeding with default."
+        else:
+            self._set_app(apps[args.name]["azure_app_id"], apps[args.name]["azure_app_key"])
+            yield "Proceeding with " + args.app
         args.app = None
 
         response = self._query_service.get_preset_query(args.preset_query_name)
@@ -176,8 +175,7 @@ class Azureapi(BotPlugin):
         else:
             self._handle_response(response, msg, args.preset_query_name)
 
-        self._app_id = old_appid
-        self._app_key = old_appkey
+        self._set_app(self, old_appid, old_appkey)
 
     @arg_botcmd('custom_query', type=str, default=None)
     @arg_botcmd('--app', type=str, unpack_args=False)
@@ -195,11 +193,11 @@ class Azureapi(BotPlugin):
 
         old_appid = self._app_id
         old_appkey = self._app_key
-        if args.app is not None:
-            try:
-                self._set_app(args.app)
-            except:
-                yield "Invalid app name, proceeding with default app"
+        if args.app not in apps:
+            yield "App name not in config file, proceeding with default."
+        else:
+            self._set_app(apps[args.name]["azure_app_id"], apps[args.name]["azure_app_key"])
+            yield "Proceeding with " + args.app
         args.app = None
 
         response = self._query_service.get_custom_query(args.custom_query)
@@ -207,8 +205,7 @@ class Azureapi(BotPlugin):
         self._handle_display(response, msg, args)
         self._handle_response(response, msg, args.custom_query)
 
-        self._app_id = old_appid
-        self._app_key = old_appkey
+        self._set_app(self, old_appid, old_appkey)
 
     @botcmd
     def get_azure_query_presets(self, msg, args):
