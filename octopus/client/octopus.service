@@ -1,11 +1,8 @@
 [Unit]
-Description=Start Errbot chatbot
-After=network.service
+Description=Octopus Client
 
 [Service]
-Environment="LC_ALL=en_US.UTF-8"
-ExecStart=/home/morty/errbot-venv/bin/errbot --config /home/morty/errbot-venv/errbot-root/config.py
-WorkingDirectory=/home/morty/errbot-venv/
-User=morty
-Restart=always
-KillSignal=SIGINT
+ExecStart=/home/morty/errbot-venv/errbot-root/plugins/octopus/client/start_client_service
+
+[Install]
+WantedBy=multi-user.target
